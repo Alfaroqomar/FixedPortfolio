@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import styles from "./SpinningImage.module.css";
+import { motion } from "framer-motion";
 
 export interface SpinningImageProps {
     // You can add props here if needed in the future
@@ -123,6 +124,7 @@ export default function SpinningImage({
     }, []);
 
     return (
+        <motion.div layout transition={{ type: "spring", stiffness: 200, damping: 30 }}>
         <div
             className={
                 useOriginalRatio
@@ -159,5 +161,6 @@ export default function SpinningImage({
                 )}
             </a>
         </div>
+        </motion.div>
     );
 }

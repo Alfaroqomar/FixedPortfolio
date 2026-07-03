@@ -17,6 +17,11 @@ export default function NavBar() {
                     About
                 </a>
             </li>
+            <li>
+                <a href="#" className="nav-text text-item text-black dark:text-white hover:underline">
+                    Contact
+                </a>
+            </li>
         </ul>
     </nav>
   );

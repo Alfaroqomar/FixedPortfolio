@@ -16,23 +16,27 @@ export default function Home() {
                         ImageSrc: "/images/ProjectImages/Apoc95Menu.png",
                         LinkHref: "https://briossilva1.itch.io/9-5-apocalip",
                         UseOriginalRatio: true,
-                        ImageScale: 2,
+                        ImageScale: 1.8,
                     },
                     {
                         CardIndex: 1,
-                        ImageSrc: "/images/ProjectImages/Project2.png",
+                        ImageSrc: "/images/ProjectImages/GamePicture.png",
                         LinkHref: "https://example.com/project2",
+                        UseOriginalRatio: true,
+                        ImageScale: 1.3,
                     },
                     {
                         CardIndex: 2,
-                        ImageSrc: "/images/ProjectImages/Project3.png",
+                        ImageSrc: "/images/ProjectImages/Stargazer.jpg",
                         LinkHref: "https://example.com/project3",
+                        UseOriginalRatio: true,
+                        ImageScale: 1.5,
                     },
                 ]}
             />
       </div>
 
-      {/* <div className="form-section flex min-h-screen items-center justify-center bg-white font-sans dark:bg-black">
+      <div className="form-section flex min-h-screen items-center justify-center bg-white font-sans dark:bg-black">
         <form className="flex flex-col space-y-4 bg-gray-100 p-8 rounded shadow-md w-96">
           <h2 className="text-2xl font-bold mb-4 text-black dark:text-white">Contact Me</h2>
           <input
@@ -56,7 +60,7 @@ export default function Home() {
             Send Message
           </button>
         </form>
-      </div> */}
+      </div>
     </div>
   );
 }
