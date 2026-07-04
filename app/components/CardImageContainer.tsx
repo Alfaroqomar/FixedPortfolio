@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import SpinningImage, { type SpinningImageProps } from "./SpinningImage";
 
 interface CardImageContainerProps {
@@ -12,14 +12,13 @@ interface CardImageContainerProps {
 const MaxCardsOnScreen = 3;
 const DEFAULT_FRAME_WIDTH_PX = 220;
 const MIN_EDGE_BUFFER_PX = 10;
-const MAX_ROTATION_DEG = 30;
-const MIN_ROTATION_DEG = 6;
 
 export default function CardImageContainer({ Cards }: CardImageContainerProps) {
     const [offset, setOffset] = useState(0);
-    const [sessionSeed, setSessionSeed] = useState(0);
     const [rotationSeed, setRotationSeed] = useState(0);
     const [activeCenterKey, setActiveCenterKey] = useState<number | null>(null);
+    const rotationSeedFrameRef = useRef<number | null>(null);
+    const rotationSeedCommitFrameRef = useRef<number | null>(null);
     const cardCount = Cards?.length ?? 0;
     const canCycle = cardCount > 1;
 
@@ -31,9 +30,6 @@ export default function CardImageContainer({ Cards }: CardImageContainerProps) {
         return Math.floor(Math.random() * 2 ** 32);
     };
 
-    useEffect(() => {
-        setSessionSeed(createRandomSeed());
-    }, []);
     const orderedCards = useMemo(() => {
         if (!Cards?.length) return [] as { card: SpinningImageProps; originalIndex: number }[];
         const normalizedOffset = ((offset % cardCount) + cardCount) % cardCount;
@@ -67,14 +63,42 @@ export default function CardImageContainer({ Cards }: CardImageContainerProps) {
         [edgePadding]
     );
 
+    useEffect(() => {
+        return () => {
+            if (rotationSeedFrameRef.current !== null) {
+                window.cancelAnimationFrame(rotationSeedFrameRef.current);
+            }
+            if (rotationSeedCommitFrameRef.current !== null) {
+                window.cancelAnimationFrame(rotationSeedCommitFrameRef.current);
+            }
+        };
+    }, []);
+
+    const refreshRotationSeed = () => {
+        if (rotationSeedFrameRef.current !== null) {
+            window.cancelAnimationFrame(rotationSeedFrameRef.current);
+        }
+        if (rotationSeedCommitFrameRef.current !== null) {
+            window.cancelAnimationFrame(rotationSeedCommitFrameRef.current);
+        }
+
+        rotationSeedFrameRef.current = window.requestAnimationFrame(() => {
+            rotationSeedCommitFrameRef.current = window.requestAnimationFrame(() => {
+                setRotationSeed(createRandomSeed());
+                rotationSeedFrameRef.current = null;
+                rotationSeedCommitFrameRef.current = null;
+            });
+        });
+    };
+
     const handlePrevious = () => {
-        setRotationSeed(createRandomSeed());
         setOffset((current) => (cardCount ? (current + 1) % cardCount : current));
+        refreshRotationSeed();
     };
 
     const handleNext = () => {
-        setRotationSeed(createRandomSeed());
         setOffset((current) => (cardCount ? (current - 1 + cardCount) % cardCount : current));
+        refreshRotationSeed();
     };
 
     const centerIndex = Math.floor(orderedCards.length / 2);
@@ -87,39 +111,6 @@ export default function CardImageContainer({ Cards }: CardImageContainerProps) {
 
         return () => window.cancelAnimationFrame(frameId); 
     }, [orderedCards, centerIndex]);
-    const slotRotations = useMemo(() => {
-        if (!orderedCards.length) return [] as { x: number; y: number }[];
-        const hashSeed = (input: string) => {
-            let hash = 2166136261;
-            for (let i = 0; i < input.length; i += 1) {
-                hash ^= input.charCodeAt(i);
-                hash = Math.imul(hash, 16777619);
-            }
-            return hash >>> 0;
-        };
-        const makeRandom = (seed: number) => {
-            let state = seed;
-            return () => {
-                state += 0x6d2b79f5;
-                let t = state;
-                t = Math.imul(t ^ (t >>> 15), t | 1);
-                t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-            };
-        };
-        const randomDeg = (rand: () => number) => {
-            const magnitude = MIN_ROTATION_DEG + rand() * (MAX_ROTATION_DEG - MIN_ROTATION_DEG);
-            return rand() > 0.5 ? magnitude : -magnitude;
-        };
-
-        return orderedCards.map((_, index) => {
-            const rand = makeRandom(hashSeed(`${sessionSeed}|${rotationSeed}|${index}`));
-            return {
-                x: Number(randomDeg(rand).toFixed(2)),
-                y: Number(randomDeg(rand).toFixed(2)),
-            };
-        });
-    }, [orderedCards.length, rotationSeed, sessionSeed]);
 
     return (
         <div className="card-image-controls flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
@@ -140,7 +131,6 @@ export default function CardImageContainer({ Cards }: CardImageContainerProps) {
                     const isFirst = displayIndex === 0;
                     const isLast = displayIndex === (orderedCards.length - 1);
                     const fadeDirection = isFirst ? "left" : isLast ? "right" : undefined;
-                    const rotation = slotRotations[displayIndex];
                     const cardKey = card.CardIndex ?? originalIndex;
 
                     return (
@@ -150,8 +140,7 @@ export default function CardImageContainer({ Cards }: CardImageContainerProps) {
                             CardIndex={cardKey}
                             FadeDirection={card.FadeDirection ?? fadeDirection}
                             IsCenter={activeCenterKey === cardKey}
-                            RotateX={rotation?.x}
-                            RotateY={rotation?.y}
+                            RotationSeed={rotationSeed}
                         />
                     );
                 })}

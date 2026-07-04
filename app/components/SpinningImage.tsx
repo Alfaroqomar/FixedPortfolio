@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import styles from "./SpinningImage.module.css";
-import { motion } from "framer-motion";
 
 export interface SpinningImageProps {
     // You can add props here if needed in the future
@@ -80,6 +79,10 @@ export default function SpinningImage({
     }, [CardIndex, ImageSrc, RotationSeed]);
     const rotateX = prefersReducedMotion || IsCenter ? 0 : RotateX ?? rotation.x;
     const rotateY = prefersReducedMotion || IsCenter ? 0 : RotateY ?? rotation.y;
+    const targetRotation = { x: rotateX, y: rotateY, scale: wrapperScaleValue };
+    const animationFrameRef = useRef<number | null>(null);
+    const animatedRotationRef = useRef(targetRotation);
+    const [animatedRotation, setAnimatedRotation] = useState(targetRotation);
     const frameStyle: SpinStyle = {
         ...(useOriginalRatio
             ? {}
@@ -88,9 +91,7 @@ export default function SpinningImage({
                   ...(FrameHeight ? { "--spin-height": `${FrameHeight}px` } : {}),
               }),
         "--spin-image-scale": `${imageScaleValue}`,
-        "--spin-wrapper-scale": `${wrapperScaleValue}`,
-        "--spin-rotate-x": `${rotateX}deg`,
-        "--spin-rotate-y": `${rotateY}deg`,
+        transform: `perspective(800px) rotateY(${animatedRotation.y}deg) rotateX(${animatedRotation.x}deg) scale(${animatedRotation.scale})`,
     };
     const imageStyle = {
         ...(ImagePosition ? { objectPosition: ImagePosition } : null),
@@ -123,8 +124,56 @@ export default function SpinningImage({
         return () => media.removeListener(updatePreference);
     }, []);
 
+    useEffect(() => {
+        if (animationFrameRef.current !== null) {
+            window.cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = null;
+        }
+
+        const from = animatedRotationRef.current;
+        const to = targetRotation;
+        const duration = prefersReducedMotion ? 0 : 900;
+
+        if (duration === 0) {
+            animatedRotationRef.current = to;
+            setAnimatedRotation(to);
+            return;
+        }
+
+        const startTime = window.performance.now();
+        const easeOutCubic = (value: number) => 1 - Math.pow(1 - value, 3);
+
+        const step = (now: number) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = easeOutCubic(progress);
+
+            const nextRotation = {
+                x: from.x + (to.x - from.x) * eased,
+                y: from.y + (to.y - from.y) * eased,
+                scale: from.scale + (to.scale - from.scale) * eased,
+            };
+
+            animatedRotationRef.current = nextRotation;
+            setAnimatedRotation(nextRotation);
+
+            if (progress < 1) {
+                animationFrameRef.current = window.requestAnimationFrame(step);
+            } else {
+                animationFrameRef.current = null;
+            }
+        };
+
+        animationFrameRef.current = window.requestAnimationFrame(step);
+
+        return () => {
+            if (animationFrameRef.current !== null) {
+                window.cancelAnimationFrame(animationFrameRef.current);
+                animationFrameRef.current = null;
+            }
+        };
+    }, [targetRotation.x, targetRotation.y, targetRotation.scale, prefersReducedMotion]);
+
     return (
-        <motion.div layout transition={{ type: "spring", stiffness: 200, damping: 30 }}>
         <div
             className={
                 useOriginalRatio
@@ -161,6 +210,5 @@ export default function SpinningImage({
                 )}
             </a>
         </div>
-        </motion.div>
     );
 }
