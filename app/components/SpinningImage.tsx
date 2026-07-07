@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import styles from "./SpinningImage.module.css";
+import { motion } from "framer-motion";
 
 export interface SpinningImageProps {
     // You can add props here if needed in the future
@@ -174,41 +175,43 @@ export default function SpinningImage({
     }, [targetRotation.x, targetRotation.y, targetRotation.scale, prefersReducedMotion]);
 
     return (
-        <div
-            className={
-                useOriginalRatio
-                    ? `${styles.wrap} ${styles.wrapOriginal} ${glareClass}`
-                    : `${styles.wrap} ${glareClass}`
-            }
-            style={frameStyle}
-        >
-            <a href={LinkHref || "#"} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                {useOriginalRatio ? (
-                    <Image
-                        src={ImageSrc || "/images/ProjectImages/BrookIdle.png"}
-                        width={ImageWidth ?? 220}
-                        height={ImageHeight ?? 300}
-                        quality={100}
-                        className={`${styles.image} ${fadeClass}`}
-                        preload
-                        style={imageStyle}
-                        alt="Spinning Image"
-                    />
-                ) : (
-                    <span className={styles.fillFrame}>
+        <motion.div layout transition={{ type: "spring", stiffness: 200, damping: 30 }}>
+            <div
+                className={
+                    useOriginalRatio
+                        ? `${styles.wrap} ${styles.wrapOriginal} ${glareClass}`
+                        : `${styles.wrap} ${glareClass}`
+                }
+                style={frameStyle}
+            >
+                <a href={LinkHref || "#"} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                    {useOriginalRatio ? (
                         <Image
                             src={ImageSrc || "/images/ProjectImages/BrookIdle.png"}
-                            fill
-                            sizes={FrameWidth ? `${FrameWidth}px` : "(min-width: 1024px) 220px, (min-width: 768px) 200px, 180px"}
+                            width={ImageWidth ?? 220}
+                            height={ImageHeight ?? 300}
                             quality={100}
                             className={`${styles.image} ${fadeClass}`}
                             preload
                             style={imageStyle}
                             alt="Spinning Image"
                         />
-                    </span>
-                )}
-            </a>
-        </div>
+                    ) : (
+                        <span className={styles.fillFrame}>
+                            <Image
+                                src={ImageSrc || "/images/ProjectImages/BrookIdle.png"}
+                                fill
+                                sizes={FrameWidth ? `${FrameWidth}px` : "(min-width: 1024px) 220px, (min-width: 768px) 200px, 180px"}
+                                quality={100}
+                                className={`${styles.image} ${fadeClass}`}
+                                preload
+                                style={imageStyle}
+                                alt="Spinning Image"
+                            />
+                        </span>
+                    )}
+                </a>
+            </div>
+        </motion.div>
     );
 }
