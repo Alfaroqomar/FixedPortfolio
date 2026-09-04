@@ -2,27 +2,14 @@
 
 export default function NavBar() {
   return (
-    <nav className="nav-bar bg-item w-full px-16 py-4.5 flex items-center justify-between align-middle fixed border-b z-1000">
-        <div className="name-text text-item text-xl font-bold text-black dark:text-white">
-            Alfaroqomar Alaa
-        </div>
-        <ul className="flex space-x-8 button-cuts">
-            <li>
-                <a href="#" className="nav-text text-item text-black dark:text-white hover:underline">
-                    Home
-                </a>
-            </li>
-            <li>
-                <a href="#" className="nav-text text-item text-black dark:text-white hover:underline">
-                    About
-                </a>
-            </li>
-            <li>
-                <a href="#" className="nav-text text-item text-black dark:text-white hover:underline">
-                    Contact
-                </a>
-            </li>
+    <nav className="nav-bar">
+        <a href="#home" className="name-text">Alfaroqomar Alaa</a>
+        <ul className="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#contact">Contact</a></li>
         </ul>
+        <span className="nav-status"><i /> Available</span>
     </nav>
   );
 }
