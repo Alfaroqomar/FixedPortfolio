@@ -12,10 +12,10 @@ export default function Home() {
         <section id="contact" className="contact-section">
           <div className="contact-copy">
             <p className="eyebrow">Contact</p>
-            <h2>Have a project<br /><em>in mind?</em></h2>
-            <p className="contact-lede">I’m always interested in thoughtful products, playful experiments, and teams who care about the details.</p>
+            <h2>Open to work.</h2>
+            <p className="contact-lede">Open to positions or contract work, local or global. Interested? shoot me an email!</p>
             <a className="contact-link" href="mailto:alfaroqomaralaa@gmail.com">alfaroqomaralaa@gmail.com <span>↗</span></a>
-            <div className="contact-meta"><span>Based in the US</span><span>Available for select work</span></div>
+            <div className="contact-meta"><span>Arizona, US</span><span>Available for work</span></div>
           </div>
         </section>
       </main>

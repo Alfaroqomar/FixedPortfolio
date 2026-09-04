@@ -8,7 +8,7 @@ export default function Intro() {
             <div className="intro-content">
                 <div className="intro-heading">
                     <p className="eyebrow">Software engineer · Game developer</p>
-                    <h1>I make digital<br /><em>things matter.</em></h1>
+                    <h1>Bringing ideas<br /><em>to life</em></h1>
                 </div>
                 <div className="intro-aside">
                     <Image

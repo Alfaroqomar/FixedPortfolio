@@ -32,7 +32,7 @@ export default function GridBox({
     const content = (
         <div
             className={`${styles.box} ${className}`}
-            style={style}
+            style={linkHref ? undefined : style}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -60,6 +60,7 @@ export default function GridBox({
             <Link
                 href={linkHref}
                 className="block h-full"
+                style={style}
                 target={isExternal ? "_blank" : undefined}
                 rel={isExternal ? "noopener noreferrer" : undefined}
             >
