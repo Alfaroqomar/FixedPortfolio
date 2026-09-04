@@ -18,6 +18,7 @@ export interface Project {
     gridHeight?: number
 }
 
+
 const projects: Project[] = [
     { title: "9:5 Apocalypse", role: "System Programming / Shader Dev", contribution: "The majority of my time for this game went into the development for mini-games and limb detachment. I also developed shaders for highlighting objects in the environment and dissolving enemies.", description: "A strange little game about surviving the workday when the world ends around you.", tags: ["Unity", "Design"], imageSrc: "/images/ProjectImages/Apoc95Menu.png", linkHref: "https://briossilva1.itch.io/9-5-apocalip", gridColumn: 1, gridRow: 1, gridWidth: 5, gridHeight: 2 },
     { title: "P R E P A RE", role: "Game Programming / Back-End ", contribution: "I did programming for the entire game; I handled game state, progression, mini-games, dialogue import, tech art, and more. Outside the game, I worked on database management, user data security, and automation of certain specialized tasks.", description: "A game developed for professional training purposes. Players would learn how to handle various scenarious relating to wildfire smoke. The game simulated the POV of one of three roles: a Facility Manager, Teacher, or Administrator. Each role has unique content. Finally, players conclude the simulation with a 10 question quiz, resulting in a certificate.", tags: ["Professional", "Training", "Unity"], imageSrc: "/images/ProjectImages/GamePicture.png", linkHref: "https://warmgamedemo.netlify.app", gridColumn: 6, gridRow: 1, gridWidth: 12, gridHeight: 2 },
