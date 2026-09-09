@@ -18,7 +18,7 @@ export default function Intro() {
                     height={360}
                     className="intro-photo"
                     />
-                    <p>Passionate about building scalable web applications and exploring new technologies. Experienced in React, Node.js, and cloud services.</p>
+                    <p>Software engineer with a passion for realizing creative endeavors and experimenting with new technologies.</p>
                 </div>
             </div>
         </section>
