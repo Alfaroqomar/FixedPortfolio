@@ -2,6 +2,7 @@
 import Image from "next/image";
 export default function Intro() {
 
+    
     return (
         <section id="home" className="intro">
             <div className="intro-topline"><span>Scroll to explore</span></div>

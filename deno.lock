@@ -11,6 +11,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@opennextjs/cloudflare@^1.20.6",
         "npm:@tailwindcss/postcss@4",
         "npm:@types/node@20",
         "npm:@types/react-dom@19",
@@ -22,7 +23,8 @@
         "npm:react-dom@19.2.3",
         "npm:react@19.2.3",
         "npm:tailwindcss@4",
-        "npm:typescript@5"
+        "npm:typescript@5",
+        "npm:wrangler@^4.129.0"
       ]
     }
   }
