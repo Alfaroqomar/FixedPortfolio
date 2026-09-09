@@ -26,6 +26,7 @@ const projects: Project[] = [
     { title: "Stargazer", role: "Interactive experiment", contribution: "", description: "A hyper involved score-based matching game! Players must draw constellations from stars, resulting in a temporary score booster as depending on constellation type.", tags: ["Design", "Prototype", "Jam", "Godot"], imageSrc: "/images/ProjectImages/Stargazer.jpg", linkHref: "https://briossilva1.itch.io/stargazer-ludum-dare", gridColumn: 10, gridRow: 3, gridWidth: 3, gridHeight: 1},
 ]
 
+
 // Add keywords here to highlight them in every contribution.
 const contributionHighlights: Record<string, string> = {
     program: "#c59bff",
@@ -38,11 +39,21 @@ const contributionHighlights: Record<string, string> = {
     automation: "#7c6f86",
 }
 
+const disableContributionColors = true
+
+const tagColors: Record<string, string> = {
+    godot: "#3683db",
+    unity: "#8a9489",
+    professional: "#b3a849",
+}
+
 function escapeRegExp(value: string) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
 
 function highlightContribution(text: string) {
+    if (disableContributionColors) return text
+
     const keywords = Object.keys(contributionHighlights)
     if (keywords.length === 0) return text
 
@@ -54,6 +65,10 @@ function highlightContribution(text: string) {
             ? <span key={`${part}-${index}`} className="contribution-highlight" style={{ color: style }}>{part}</span>
             : part
     })
+}
+
+function getTagColor(tag: string) {
+    return tagColors[tag.toLowerCase()]
 }
 
 export default function ProjectsGrid() {
@@ -91,7 +106,10 @@ export default function ProjectsGrid() {
                                     {project.title && <h3 className="text-lg font-medium text-black dark:text-white">{project.title}</h3>}
                                     {project.contribution && <p className="project-contribution"><strong>Contribution:</strong> {highlightContribution(project.contribution)}</p>}
                                     {project.description && <p className="text-sm text-neutral-600 dark:text-neutral-400">{project.description}</p>}
-                                    {project.tags && project.tags.length > 0 && <ul className="mt-1 flex flex-wrap gap-2">{project.tags.map((tag) => <li key={tag} className="rounded-full border border-neutral-300 px-2.5 py-0.5 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">{tag}</li>)}</ul>}
+                                    {project.tags && project.tags.length > 0 && <ul className="mt-1 flex flex-wrap gap-2">{project.tags.map((tag) => {
+                                        const color = getTagColor(tag)
+                                        return <li key={tag} className="rounded-full border border-neutral-300 px-2.5 py-0.5 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-400" style={color ? { color, borderColor: color } : undefined}>{tag}</li>
+                                    })}</ul>}
                                 </>
                             )}
                         </GridBox>
