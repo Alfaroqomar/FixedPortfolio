@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
+import { useEffect } from "react";
+import packageJson from "../package.json";
 import NavBar from "./components/navbar";
 import Intro from "./components/intro";
 import ProjectsGrid from "./components/ProjectsGrid";
@@ -10,14 +12,38 @@ const emailAddress = "alfaroqomaralaa@gmail.com";
 export default function Home() {
   const [copied, setCopied] = useState(false);
 
+  useEffect(() => {
+    console.debug(`[build ${packageJson.version}]`);
+  }, []);
+
   async function copyEmail(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
 
     try {
-      await navigator.clipboard.writeText(emailAddress);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(emailAddress);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = emailAddress;
+        textArea.setAttribute("readonly", "");
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        const copiedWithFallback = document.execCommand("copy");
+        textArea.remove();
+
+        if (!copiedWithFallback) {
+          throw new Error("Clipboard access is unavailable.");
+        }
+      }
+
       setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
     } catch (error) {
       console.error("Failed to copy email address to clipboard.", error);
+      window.location.href = event.currentTarget.href;
     }
   }
 
